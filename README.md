@@ -1,4 +1,8 @@
-# API de ventas — fases 1–3
+# Redis-Cache-Ventas
+
+API del punto de venta para consultar la tabla venta e incorporar caché con Redis por fases.
+
+## Implementación — fases 1–3
 
 API REST de solo lectura sobre la tabla existente `pos_caja.dbo.venta`, con .NET 10 y Entity Framework Core. Redis queda pendiente de la fase 4.
 
