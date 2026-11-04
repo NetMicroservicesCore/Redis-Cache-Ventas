@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Api.Redis/Api.Redis.csproj" />
+  <Project Path="PosCaja.Application/PosCaja.Application.csproj" />
+  <Project Path="PosCaja.Domain/PosCaja.Domain.csproj" />
+  <Project Path="PosCaja.Infrastructure.SqlServer/PosCaja.Infrastructure.SqlServer.csproj" />
+  <Project Path="PosCaja.Tests/PosCaja.Tests.csproj" />
+</Solution>

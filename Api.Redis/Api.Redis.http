@@ -1,0 +1,14 @@
+@Api.Redis_HostAddress = https://localhost:7096
+
+GET {{Api.Redis_HostAddress}}/api/ventas?pagina=1&tamanoPagina=50
+Accept: application/json
+
+###
+
+GET {{Api.Redis_HostAddress}}/api/ventas/00000000-0000-0000-0000-000000000001/1
+Accept: application/json
+
+###
+
+GET {{Api.Redis_HostAddress}}/api/ventas?pagina=0
+Accept: application/problem+json
