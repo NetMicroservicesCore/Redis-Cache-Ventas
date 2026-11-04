@@ -8,7 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options => options.AddDocumentTransformer((document, context, cancellationToken) =>
+{
+    document.Info.Title = "API de ventas";
+    document.Info.Version = "v1";
+    document.Info.Description = "Consultas de solo lectura a pos_caja.dbo.venta. La identificación de una venta requiere idVenta e idPos.";
+    return Task.CompletedTask;
+}));
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddScoped<IVentaService, VentaService>();
@@ -27,6 +33,12 @@ app.UseStatusCodePages();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.RoutePrefix = "swagger";
+        options.DocumentTitle = "Documentación — API de ventas";
+        options.SwaggerEndpoint("../openapi/v1.json", "API de ventas v1");
+    });
 }
 
 app.UseHttpsRedirection();

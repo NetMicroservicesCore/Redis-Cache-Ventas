@@ -87,6 +87,11 @@ API: https://localhost:7096. Si el certificado HTTPS local no es de confianza, e
 - `GET /api/ventas/{idVenta}/{idPos}`: 200 o 404.
 - `GET /api/ventas?pagina=1&tamanoPagina=50`: página con items, pagina, tamanoPagina y totalRegistros.
 - `GET /openapi/v1.json`: documento OpenAPI en Development.
+- `GET /swagger`: documentación interactiva Swagger UI en Development.
+
+Para explorar la API, abrir https://localhost:7096/swagger después de iniciar el perfil https. Expandir una operación y usar **Try it out**, completar los parámetros y pulsar **Execute**. Las consultas se ejecutan contra el SQL Server configurado; requieren una conexión válida y permisos de lectura.
+
+Swagger UI utiliza el documento generado por Microsoft.AspNetCore.OpenApi, sin un segundo generador de esquemas. Incluye descripciones de las operaciones, parámetros, modelos y respuestas. Tanto Swagger UI como el documento OpenAPI están deshabilitados en Production.
 
 El archivo Api.Redis/Api.Redis.http incluye ejemplos. Sustituir los identificadores del ejemplo por claves reales.
 

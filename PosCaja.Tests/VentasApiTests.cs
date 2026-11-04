@@ -12,6 +12,7 @@ namespace PosCaja.Tests;
 
 public sealed class VentasApiFactory : WebApplicationFactory<Program>
 {
+    public string EnvironmentName { get; init; } = "Development";
     public TestVentaRepository Repository { get; } = new();
     protected override IHost CreateHost(IHostBuilder builder)
     {
@@ -28,7 +29,7 @@ public sealed class VentasApiFactory : WebApplicationFactory<Program>
     }
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Development");
+        builder.UseEnvironment(EnvironmentName);
         builder.ConfigureServices(services =>
         {
             services.RemoveAll<IVentaRepository>();
@@ -128,5 +129,39 @@ public sealed class VentasApiTests
         var body = await response.Content.ReadAsStringAsync();
         Assert.Contains("/api/ventas/{idVenta}/{idPos}", body);
         Assert.Contains("\"/api/ventas\"", body);
+        Assert.Contains("API de ventas", body);
+        using var document = System.Text.Json.JsonDocument.Parse(body);
+        var operation = document.RootElement.GetProperty("paths").GetProperty("/api/ventas").GetProperty("get");
+        Assert.Equal("Consultar ventas paginadas", operation.GetProperty("summary").GetString());
+        Assert.True(operation.GetProperty("responses").TryGetProperty("500", out _));
+    }
+
+    [Fact]
+    public async Task SwaggerUiServesHtmlAndLocalAssets()
+    {
+        using var factory = new VentasApiFactory();
+        using var client = factory.CreateHttpsClient();
+        var response = await client.GetAsync("/swagger/index.html");
+        response.EnsureSuccessStatusCode();
+        Assert.Equal("text/html", response.Content.Headers.ContentType!.MediaType);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("swagger-ui", body);
+        var initializer = await client.GetAsync("/swagger/index.js");
+        initializer.EnsureSuccessStatusCode();
+        Assert.Contains("../openapi/v1.json", await initializer.Content.ReadAsStringAsync());
+        var script = await client.GetAsync("/swagger/swagger-ui-bundle.js");
+        script.EnsureSuccessStatusCode();
+    }
+
+    [Theory]
+    [InlineData("/swagger/index.html")]
+    [InlineData("/swagger/swagger-ui-bundle.js")]
+    [InlineData("/openapi/v1.json")]
+    public async Task DocumentationIsNotExposedInProduction(string path)
+    {
+        using var factory = new VentasApiFactory { EnvironmentName = "Production" };
+        using var client = factory.CreateHttpsClient();
+        var response = await client.GetAsync(path);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }
