@@ -11,6 +11,7 @@
     <ProjectReference Include="../Api.Redis/Api.Redis.csproj" />
     <ProjectReference Include="../PosCaja.Application/PosCaja.Application.csproj" />
     <ProjectReference Include="../PosCaja.Infrastructure.SqlServer/PosCaja.Infrastructure.SqlServer.csproj" />
+    <ProjectReference Include="..\PosCaja.Infrastructure.Redis\PosCaja.Infrastructure.Redis.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.11" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
