@@ -2,6 +2,7 @@
   <Project Path="Api.Redis/Api.Redis.csproj" />
   <Project Path="PosCaja.Application/PosCaja.Application.csproj" />
   <Project Path="PosCaja.Domain/PosCaja.Domain.csproj" />
+  <Project Path="PosCaja.Infrastructure.Redis/PosCaja.Infrastructure.Redis.csproj" Id="b0b22f8c-f86d-4a9f-8a68-bfb1bd1dfba9" />
   <Project Path="PosCaja.Infrastructure.SqlServer/PosCaja.Infrastructure.SqlServer.csproj" />
   <Project Path="PosCaja.Tests/PosCaja.Tests.csproj" />
 </Solution>

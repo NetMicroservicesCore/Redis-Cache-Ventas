@@ -33,6 +33,12 @@ Sustituir servidor e instancia. La autenticación integrada utiliza la identidad
 
 El certificado SQL debe ser válido para el servidor indicado; si el servidor local usa un certificado autofirmado, configurar su confianza o usar TrustServerCertificate=True exclusivamente para ese entorno de desarrollo.
 
+Los perfiles locales `http` y `https` de launchSettings.json establecen `SqlServer__TrustServerCertificate=true` para trabajar con la instancia local de desarrollo. Esta variable del perfil tiene prioridad sobre el valor heredado de Windows. El cifrado permanece habilitado por defecto. No utilizar estos perfiles para conectar a producción: omiten la validación de identidad del servidor.
+
+Se verificó que la instancia local presentaba un timeout SSL de pre-login con validación del certificado, mientras que con esta excepción podía abrir la conexión y consultar dbo.venta. Esto no justifica desactivar Encrypt ni ampliar los tiempos de espera.
+
+En producción, ejecutar la aplicación publicada sin perfiles de lanzamiento y mantener `SqlServer__Encrypt=true` y `SqlServer__TrustServerCertificate=false`, con un certificado válido y confiable en SQL Server. Reiniciar Visual Studio después de modificar las variables de Windows para que herede sus nuevos valores.
+
 ### Configuración centralizada y producción
 
 `SqlServerOptions` centraliza las propiedades y construye la cadena mediante `SqlConnectionStringBuilder`, que preserva contraseñas con caracteres especiales. `SqlServerOptionsValidator` valida al iniciar, incluso antes de la primera consulta, sin incluir los valores en sus mensajes de error. Nunca registrar las opciones completas ni la cadena generada.
