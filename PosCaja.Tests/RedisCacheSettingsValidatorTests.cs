@@ -72,5 +72,22 @@ namespace PosCaja.Tests
             Assert.Equal(expectedSuccess, result.Succeeded);
         }
 
+        [Theory]
+        [InlineData(-1, false)]
+        [InlineData(0, true)]
+        [InlineData(1, false)]
+        public void OnlyDatabaseZeroIsSupported(
+        int database,
+        bool expectedSuccess)
+        {
+            var settings = CreateValidSettings();
+            settings.Database = database;
+
+            var result = validator.Validate(Options.DefaultName, settings);
+
+            Assert.Equal(expectedSuccess, result.Succeeded);
+        }
+
+
     }
 }
