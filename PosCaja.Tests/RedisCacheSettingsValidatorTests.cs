@@ -104,5 +104,22 @@ namespace PosCaja.Tests
 
             Assert.Equal(expectedSuccess, result.Succeeded);
         }
+
+        [Theory]
+        [InlineData(0, false)]
+        [InlineData(1, true)]
+        [InlineData(3600, true)]
+        [InlineData(3601, false)]
+        public void TtlMustBeWithinAllowedRange(
+       int seconds,
+       bool expectedSuccess)
+        {
+            var settings = CreateValidSettings();
+            settings.TtlSeconds = seconds;
+
+            var result = validator.Validate(Options.DefaultName, settings);
+
+            Assert.Equal(expectedSuccess, result.Succeeded);
+        }
     }
 }
