@@ -144,5 +144,25 @@ namespace PosCaja.Tests
 
             Assert.Equal(expectedSuccess, result.Succeeded);
         }
+
+        [Theory]
+        [InlineData(null, null, true)]
+        [InlineData(null, "test-password", true)]
+        [InlineData("test-user", null, false)]
+        [InlineData("test-user", "", false)]
+        [InlineData("test-user", "test-password", true)]
+        public void ExplicitUserRequiresPassword(
+        string? user,
+        string? password,
+        bool expectedSuccess)
+        {
+            var settings = CreateValidSettings();
+            settings.User = user;
+            settings.Password = password;
+
+            var result = validator.Validate(Options.DefaultName, settings);
+
+            Assert.Equal(expectedSuccess, result.Succeeded);
+        }
     }
 }
