@@ -1,16 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PosCaja.Infrastructure.Redis
 {
     public sealed class RedisCacheSettingsValidator
     : IValidateOptions<RedisCacheSettings>
     {
-        public ValidateOptionsResult Validate(
-            string? name,
-            RedisCacheSettings options)
+        public ValidateOptionsResult Validate(string? name,RedisCacheSettings options)
         {
             if (!options.Enabled)
             {
