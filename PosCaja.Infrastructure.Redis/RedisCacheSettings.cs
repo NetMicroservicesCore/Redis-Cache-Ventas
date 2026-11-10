@@ -29,5 +29,39 @@ namespace PosCaja.Infrastructure.Redis
         public int ConnectTimeoutMilliseconds { get; set; } = 1000;
 
         public int AsyncTimeoutMilliseconds { get; set; } = 1000;
+
+        public ConfigurationOptions BuildConfigurationOptions()
+        {
+            if (!Enabled)
+            {
+                throw new InvalidOperationException(
+                    "Redis está desactivado; no se debe construir su conexión.");
+            }
+            var validator = new RedisCacheSettingsValidator();
+            var validation = validator.Validate(Options.DefaultName,this);
+
+            if (validation.Failed)
+            {
+                throw new OptionsValidationException(
+                    Options.DefaultName,
+                    typeof(RedisCacheSettings),
+                    validation.Failures);
+            }
+
+            var configuration = new ConfigurationOptions
+            {
+                DefaultDatabase = Database,
+                Ssl = Ssl,
+                ConnectTimeout = ConnectTimeoutMilliseconds,
+                AsyncTimeout = AsyncTimeoutMilliseconds,
+                ConnectRetry = 0,
+                AbortOnConnectFail = false,
+                BacklogPolicy = BacklogPolicy.FailFast
+            };
+            configuration.EndPoints.Add(Host, Port);
+
+
+        }
+
     }
 }
