@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 namespace PosCaja.Infrastructure.Redis
 {
     public sealed class RedisCacheSettings
