@@ -121,5 +121,28 @@ namespace PosCaja.Tests
 
             Assert.Equal(expectedSuccess, result.Succeeded);
         }
+
+        [Theory]
+        [InlineData(99, 1000, false)]
+        [InlineData(100, 1000, true)]
+        [InlineData(30000, 1000, true)]
+        [InlineData(30001, 1000, false)]
+        [InlineData(1000, 99, false)]
+        [InlineData(1000, 100, true)]
+        [InlineData(1000, 30000, true)]
+        [InlineData(1000, 30001, false)]
+        public void TimeoutsMustBeWithinAllowedRange(
+        int connectTimeout,
+        int asyncTimeout,
+        bool expectedSuccess)
+        {
+            var settings = CreateValidSettings();
+            settings.ConnectTimeoutMilliseconds = connectTimeout;
+            settings.AsyncTimeoutMilliseconds = asyncTimeout;
+
+            var result = validator.Validate(Options.DefaultName, settings);
+
+            Assert.Equal(expectedSuccess, result.Succeeded);
+        }
     }
 }
