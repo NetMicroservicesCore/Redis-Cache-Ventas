@@ -59,7 +59,22 @@ namespace PosCaja.Infrastructure.Redis
                 BacklogPolicy = BacklogPolicy.FailFast
             };
             configuration.EndPoints.Add(Host, Port);
+            if (!string.IsNullOrEmpty(User))
+            {
+                configuration.User = User;
+            }
 
+            if (!string.IsNullOrEmpty(Password))
+            {
+                configuration.Password = Password;
+            }
+
+            if (!string.IsNullOrWhiteSpace(SslHost))
+            {
+                configuration.SslHost = SslHost;
+            }
+
+            return configuration;
 
         }
 
