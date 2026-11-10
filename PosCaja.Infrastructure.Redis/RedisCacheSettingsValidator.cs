@@ -9,7 +9,12 @@ namespace PosCaja.Infrastructure.Redis
     {
         public ValidateOptionsResult Validate(string? name, RedisCacheSettings options)
         {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(options);
+
+            if (!options.Enabled)
+            {
+                return ValidateOptionsResult.Success;
+            }
         }
     }
 }
