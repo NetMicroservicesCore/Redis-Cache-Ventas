@@ -36,6 +36,28 @@ namespace PosCaja.Infrastructure.Redis
             {
                 errors.Add("Redis:KeyPrefix es obligatorio.");
             }
+            if (options.TtlSeconds is < 1 or > 3600)
+            {
+                errors.Add("Redis:TtlSeconds debe estar entre 1 y 3600.");
+            }
+
+            if (options.ConnectTimeoutMilliseconds is < 100 or > 30000)
+            {
+                errors.Add(
+                    "Redis:ConnectTimeoutMilliseconds debe estar entre 100 y 30000.");
+            }
+
+            if (options.AsyncTimeoutMilliseconds is < 100 or > 30000)
+            {
+                errors.Add(
+                    "Redis:AsyncTimeoutMilliseconds debe estar entre 100 y 30000.");
+            }
+
+            if (!string.IsNullOrEmpty(options.User)
+                && string.IsNullOrWhiteSpace(options.User))
+            {
+                errors.Add("Redis:User no puede contener únicamente espacios.");
+            }
         }
     }
 }
