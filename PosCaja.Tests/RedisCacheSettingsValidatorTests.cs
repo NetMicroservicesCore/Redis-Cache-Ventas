@@ -164,5 +164,28 @@ namespace PosCaja.Tests
 
             Assert.Equal(expectedSuccess, result.Succeeded);
         }
+
+        [Fact]
+        public void ValidationReportsMultipleErrorsWithoutExposingSecrets()
+        {
+            var settings = CreateValidSettings();
+            settings.Host = "";
+            settings.Port = 0;
+            settings.User = "private-user";
+            settings.Password = "private-password";
+
+            var result = validator.Validate(Options.DefaultName, settings);
+
+            Assert.True(result.Failed);
+            Assert.Contains("Redis:Host es obligatorio.", result.Failures);
+            Assert.Contains(
+                "Redis:Port debe estar entre 1 y 65535.",
+                result.Failures);
+
+            var messages = string.Join(" ", result.Failures);
+
+            Assert.DoesNotContain("private-user", messages);
+            Assert.DoesNotContain("private-password", messages);
+        }
     }
 }
