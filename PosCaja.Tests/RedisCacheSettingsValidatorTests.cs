@@ -88,6 +88,21 @@ namespace PosCaja.Tests
             Assert.Equal(expectedSuccess, result.Succeeded);
         }
 
+        [Theory]
+        [InlineData("", false)]
+        [InlineData("   ", false)]
+        [InlineData("ventas", false)]
+        [InlineData("ventas:", true)]
+        public void PrefixMustExistAndEndWithColon(
+       string prefix,
+       bool expectedSuccess)
+        {
+            var settings = CreateValidSettings();
+            settings.KeyPrefix = prefix;
 
+            var result = validator.Validate(Options.DefaultName, settings);
+
+            Assert.Equal(expectedSuccess, result.Succeeded);
+        }
     }
 }
