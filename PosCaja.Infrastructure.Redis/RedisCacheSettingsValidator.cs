@@ -5,21 +5,23 @@ using System.Text;
 
 namespace PosCaja.Infrastructure.Redis
 {
-    internal class RedisCacheSettingsValidator : IValidateOptions<RedisCacheSettings>
+    public sealed class RedisCacheSettingsValidator
+    : IValidateOptions<RedisCacheSettings>
     {
-        public ValidateOptionsResult Validate(string? name, RedisCacheSettings options)
+        public ValidateOptionsResult Validate(
+            string? name,
+            RedisCacheSettings options)
         {
-            ArgumentNullException.ThrowIfNull(options);
-
             if (!options.Enabled)
             {
                 return ValidateOptionsResult.Success;
             }
+
             var errors = new List<string>();
 
             if (string.IsNullOrWhiteSpace(options.Host))
             {
-                errors.Add("Redis:Host es obligatorio cuando Redis está activado.");
+                errors.Add("Redis:Host es obligatorio.");
             }
 
             if (options.Port is < 1 or > 65535)
@@ -29,13 +31,18 @@ namespace PosCaja.Infrastructure.Redis
 
             if (options.Database != 0)
             {
-                errors.Add("Redis:Database debe ser 0 en esta versión.");
+                errors.Add("Esta versión admite únicamente Redis:Database=0.");
             }
 
             if (string.IsNullOrWhiteSpace(options.KeyPrefix))
             {
                 errors.Add("Redis:KeyPrefix es obligatorio.");
             }
+            else if (!options.KeyPrefix.EndsWith(':'))
+            {
+                errors.Add("Redis:KeyPrefix debe terminar en ':'.");
+            }
+
             if (options.TtlSeconds is < 1 or > 3600)
             {
                 errors.Add("Redis:TtlSeconds debe estar entre 1 y 3600.");
@@ -54,10 +61,15 @@ namespace PosCaja.Infrastructure.Redis
             }
 
             if (!string.IsNullOrEmpty(options.User)
-                && string.IsNullOrWhiteSpace(options.User))
+                && string.IsNullOrEmpty(options.Password))
             {
-                errors.Add("Redis:User no puede contener únicamente espacios.");
+                errors.Add(
+                    "Redis:Password es obligatorio cuando se configura Redis:User.");
             }
+
+            return errors.Count == 0
+                ? ValidateOptionsResult.Success
+                : ValidateOptionsResult.Fail(errors);
         }
     }
 }
