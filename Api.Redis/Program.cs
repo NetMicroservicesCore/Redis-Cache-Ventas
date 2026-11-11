@@ -1,6 +1,7 @@
 using Api.Redis;
 using PosCaja.Application;
 using PosCaja.Infrastructure.SqlServer;
+using PosCaja.Infrastructure.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,13 @@ builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddScoped<IVentaService, VentaService>();
 builder.Services.AddPosCajaSqlServer(options =>
     builder.Configuration.GetSection(SqlServerOptions.SectionName).Bind(options));
+
+//agregamos la configuración de Redis
+builder.Services.AddPosCajaRedis(options =>
+    builder.Configuration
+        .GetSection(RedisCacheSettings.SectionName)
+        .Bind(options));
+
 
 var app = builder.Build();
 app.UseExceptionHandler(new ExceptionHandlerOptions
