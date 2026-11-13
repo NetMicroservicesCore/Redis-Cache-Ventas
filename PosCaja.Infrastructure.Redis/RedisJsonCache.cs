@@ -80,5 +80,46 @@ namespace PosCaja.Infrastructure.Redis
         }
 
 
+        public async Task TrySetAsync<T>(string key,T value,TimeSpan timeToLive, CancellationToken cancellationToken = default) where T : class
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(key);
+            ArgumentNullException.ThrowIfNull(value);
+
+            if (timeToLive <= TimeSpan.Zero)
+            {
+                throw new ArgumentOutOfRangeException(nameof(timeToLive),"La duración de la caché debe ser mayor que cero.");
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            byte[] bytes;
+            try
+            {
+                bytes = JsonSerializer.SerializeToUtf8Bytes(value,JsonOptions);
+            }
+            catch (JsonException)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                logger.LogWarning("No fue posible serializar el resultado para {DataType}.",typeof(T).Name);
+                return;
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            var entryOptions = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = timeToLive
+            };
+
+            try
+            {
+                await cache.SetAsync(key,bytes,entryOptions,cancellationToken);
+            }
+            catch (Exception exception)when (exception is RedisException or RedisTimeoutException)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                logger.LogWarning("Falló la escritura de caché para {DataType}. Tipo: {ErrorType}.", typeof(T).Name,exception.GetType().Name);
+                return;
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            logger.LogDebug("Escritura de caché satisfactoria para {DataType}.",typeof(T).Name);
+        }
+
     }
 }
