@@ -28,7 +28,7 @@ namespace PosCaja.Infrastructure.Redis
             {
                 bytes = await cache.GetAsync(key, cancellationToken);
             }
-            catch (RedisException exception)
+            catch (Exception exception) when (exception is RedisException or RedisTimeoutException)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
