@@ -106,9 +106,9 @@ namespace PosCaja.Infrastructure.Redis
             {
                 AbsoluteExpirationRelativeToNow = timeToLive
             };
-
             try
             {
+                //se guarda la entrada en caché con la clave y el valor serializado
                 await cache.SetAsync(key,bytes,entryOptions,cancellationToken);
             }
             catch (Exception exception)when (exception is RedisException or RedisTimeoutException)
