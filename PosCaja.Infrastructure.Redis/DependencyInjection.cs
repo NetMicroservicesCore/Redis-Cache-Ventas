@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using PosCaja.Application;
 
 namespace PosCaja.Infrastructure.Redis
 {
@@ -35,5 +37,35 @@ namespace PosCaja.Infrastructure.Redis
 
             return services;
         }
+
+        /// <summary>
+        /// este metodo se encarga de recibir el contenedor actual de servicio y regresa el repositorio que se esta utilizando
+        /// </summary>
+        /// <param name="services">inyeccion del servicio</param>
+        /// <param name="innerFactory">el contenedor del repositorio que s eutiliza.</param>
+        /// <returns></returns>
+        public static IServiceCollection AddCachedVentaRepository(this IServiceCollection services,Func<IServiceProvider,
+            IVentaRepository> innerFactory)
+        {
+            ArgumentNullException.ThrowIfNull(innerFactory);
+            services.TryAddSingleton<RedisJsonCache>();
+            services.Replace(ServiceDescriptor.Scoped<IVentaRepository>(provider =>{
+                    var options = provider
+                        .GetRequiredService<IOptions<RedisCacheSettings>>();
+                    var settings = options.Value;
+                    var inner = innerFactory(provider);
+                    if (!settings.Enabled)
+                    {
+                        return inner;
+                    }
+                    var cache = provider.GetRequiredService<RedisJsonCache>();
+                    var logger = provider.GetRequiredService<ILogger<CachedVentaRepository>>();
+                    return new CachedVentaRepository(inner,cache,options,logger);
+                }));
+
+            return services;
+        }
+
+
     }
 }
