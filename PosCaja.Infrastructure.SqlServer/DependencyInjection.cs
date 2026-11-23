@@ -15,7 +15,11 @@ public static class DependencyInjection
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<SqlServerOptions>, SqlServerOptionsValidator>());
         services.AddDbContext<PosCajaDbContext>((provider, options) =>
             options.UseSqlServer(provider.GetRequiredService<IOptions<SqlServerOptions>>().Value.BuildConnectionString()));
-        services.AddScoped<IVentaRepository, VentaRepository>();
+        // Register the VentaRepository with a key for keyed service resolution
+        services.AddKeyedScoped<IVentaRepository, VentaRepository>("sql");
+
+        services.AddScoped<IVentaRepository>(provider =>
+            provider.GetRequiredKeyedService<IVentaRepository>("sql"));
         return services;
     }
 }
