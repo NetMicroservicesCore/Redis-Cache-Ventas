@@ -23,11 +23,18 @@ builder.Services.AddPosCajaSqlServer(options =>
     builder.Configuration.GetSection(SqlServerOptions.SectionName).Bind(options));
 
 //agregamos la configuración de Redis
+builder.Services.AddPosCajaSqlServer(options =>
+    builder.Configuration
+        .GetSection(SqlServerOptions.SectionName)
+        .Bind(options));
+
 builder.Services.AddPosCajaRedis(options =>
     builder.Configuration
         .GetSection(RedisCacheSettings.SectionName)
         .Bind(options));
 
+builder.Services.AddCachedVentaRepository(provider =>
+    provider.GetRequiredKeyedService<IVentaRepository>("sql"));
 
 var app = builder.Build();
 app.UseExceptionHandler(new ExceptionHandlerOptions

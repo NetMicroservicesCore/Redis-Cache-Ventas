@@ -56,11 +56,13 @@ namespace PosCaja.Infrastructure.Redis
                         .GetRequiredService<IOptions<RedisCacheSettings>>();
                     var settings = options.Value;
                     var inner = innerFactory(provider);
-                    if (!settings.Enabled)
+                //obtenemos la configuracion de cache, si no esta habilitada, regresamos el repositorio interno.
+                if (!settings.Enabled)
                     {
                         return inner;
                     }
-                    var cache = provider.GetRequiredService<RedisJsonCache>();
+                //obtenemos el cache y el logger, para poder crear el repositorio de cache.
+                var cache = provider.GetRequiredService<RedisJsonCache>();
                     var logger = provider.GetRequiredService<ILogger<CachedVentaRepository>>();
                     return new CachedVentaRepository(inner,cache,options,logger);
                 }));
