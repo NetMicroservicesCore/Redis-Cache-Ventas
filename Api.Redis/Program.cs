@@ -22,12 +22,7 @@ builder.Services.AddScoped<IVentaService, VentaService>();
 builder.Services.AddPosCajaSqlServer(options =>
     builder.Configuration.GetSection(SqlServerOptions.SectionName).Bind(options));
 
-//agregamos la configuración de Redis
-builder.Services.AddPosCajaSqlServer(options =>
-    builder.Configuration
-        .GetSection(SqlServerOptions.SectionName)
-        .Bind(options));
-
+// Configuración de Redis y composición del repositorio.
 builder.Services.AddPosCajaRedis(options =>
     builder.Configuration
         .GetSection(RedisCacheSettings.SectionName)
