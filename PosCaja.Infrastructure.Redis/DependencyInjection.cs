@@ -47,7 +47,9 @@ namespace PosCaja.Infrastructure.Redis
         public static IServiceCollection AddCachedVentaRepository(this IServiceCollection services,Func<IServiceProvider,
             IVentaRepository> innerFactory)
         {
+            ///evitamos que el innerFactory sea nulo, ya que es necesario para crear el repositorio interno.
             ArgumentNullException.ThrowIfNull(innerFactory);
+            //registramos el repositorio de cache, para que pueda ser utilizado en el repositorio de ventas.
             services.TryAddSingleton<RedisJsonCache>();
             services.Replace(ServiceDescriptor.Scoped<IVentaRepository>(provider =>{
                     var options = provider
